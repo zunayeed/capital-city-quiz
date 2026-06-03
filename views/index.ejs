@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<!-- Declares this as an HTML5 document — tells the browser to use modern HTML parsing rules -->
+
+<html lang="en">
+<!-- Root element of the page; lang="en" helps screen readers and search engines identify the language -->
+
+<head>
+  <!-- HEAD: contains metadata and resource links — nothing here is visually rendered on the page -->
+
+  <meta charset="UTF-8">
+  <!-- Ensures the browser uses UTF-8 encoding, supporting all international characters (accents, symbols, etc.) -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Makes the layout responsive on mobile devices by matching the viewport width to the device screen width -->
+
+  <title>Capital City Quiz</title>
+  <!-- Sets the browser tab title shown at the top of the browser window -->
+
+  <link rel="stylesheet" href="/styles/main.css">
+  <!-- Links the external CSS stylesheet served from the /public/styles/main.css file via Express static middleware -->
+
+</head>
+
+<body id="app">
+  <!-- BODY: all visible page content lives here -->
+  <!-- id="app" is used by the JavaScript below to replace the entire page content on game over -->
+
+  <!-- ============================================================ -->
+  <!-- QUIZ FORM                                                      -->
+  <!-- Wraps all interactive UI in a single form that POSTs to       -->
+  <!-- the /submit route when the user clicks the SUBMIT button      -->
+  <!-- ============================================================ -->
+  <form class="container" action="/submit" method="post">
+    <!-- action="/submit" → sends form data to the POST /submit route in index.js -->
+    <!-- method="post"   → sends data in the request body (not the URL) -->
+    <!-- class="container" → applies CSS layout styles defined in main.css -->
+
+    <!-- ============================================================ -->
+    <!-- SCORE DISPLAY ROW                                             -->
+    <!-- ============================================================ -->
+    <div class="horizontal-container">
+      <!-- Wrapper div for horizontal alignment of the score label via CSS flexbox/grid -->
+
+      <h3>
+        Total Score:
+        <span id="score">
+          <%= locals.totalScore ? totalScore : "0" %>
+          <!-- EJS conditional: if totalScore was passed from the server (truthy), display it -->
+          <!-- Otherwise display "0" as the default starting score -->
+          <!-- locals.totalScore guards against a ReferenceError if the variable wasn't passed -->
+        </span>
+      </h3>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- QUESTION DISPLAY                                              -->
+    <!-- ============================================================ -->
+    <h1 id="countryName">
+      <%=question.country %>
+      <!-- EJS tag: injects the country name from the currentQuestion object passed by the server -->
+      <!-- e.g., if question = { country: "France", capital: "Paris" }, this renders: France -->
+    </h1>
+
+    <!-- ============================================================ -->
+    <!-- ANSWER INPUT                                                  -->
+    <!-- ============================================================ -->
+    <div class="answer-container">
+      <!-- Wrapper div for styling the input field via CSS -->
+
+      <input type="text" name="answer" id="userInput" placeholder="Enter the capital" autofocus autocomplete="off">
+      <!-- type="text"            → standard single-line text input -->
+      <!-- name="answer"          → key used on the server side: req.body.answer -->
+      <!-- id="userInput"         → available for CSS targeting or future JS use -->
+      <!-- placeholder="..."      → ghost text shown when the field is empty -->
+      <!-- autofocus              → automatically focuses this field when the page loads (no click needed) -->
+      <!-- autocomplete="off"     → disables browser autocomplete dropdown to keep the quiz fair -->
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SUBMIT BUTTON WITH FEEDBACK ICON                              -->
+    <!-- Shows a checkmark (✔) if the last answer was correct,        -->
+    <!-- a cross (✖) if it was wrong, or no icon on first load        -->
+    <!-- ============================================================ -->
+    <button type="submit">SUBMIT<% if(locals.wasCorrect){ %>
+        <!-- EJS block: only renders the checkmark span if wasCorrect is truthy (true) -->
+        <span class="checkmark">✔</span>
+        <!-- Green checkmark icon — styled via .checkmark class in main.css -->
+        <% } else if (locals.wasCorrect===false) { %>
+          <!-- Strict check for false (not just falsy) to avoid showing the cross on first page load -->
+          <!-- On first GET /, wasCorrect is undefined — this condition correctly skips the cross -->
+          <span class="cross" id="error">✖</span>
+          <!-- Red cross icon — styled via .cross / #error in main.css -->
+          <% } %>
+    </button>
+
+  </form>
+
+  <!-- ============================================================ -->
+  <!-- CLIENT-SIDE JAVASCRIPT — GAME OVER LOGIC                      -->
+  <!-- Runs in the browser after the page has fully loaded           -->
+  <!-- Detects a wrong answer and triggers the game over screen      -->
+  <!-- ============================================================ -->
+  <script>
+    // Read the wasCorrect value rendered by EJS into a JS string variable
+    // EJS renders the boolean server-side: true → "true", false → "false", undefined → ""
+    var wasCorrect = "<%= locals.wasCorrect %>";
+
+    // Debug: log the wasCorrect value to the browser console for inspection
+    console.log(wasCorrect)
+
+    // Check if the last answer was wrong (string "false", not boolean false)
+    // String comparison is necessary because EJS always outputs a string into the JS context
+    if (wasCorrect === "false") {
+
+      // Show a browser alert popup announcing game over with the player's final score
+      // EJS injects the totalScore value directly into the alert string at render time
+      alert('Game over! Final best score: <%= locals.totalScore %>');
+
+      // Replace the entire body content (id="app") with a simple restart link
+      // This wipes out the quiz form and shows only a button to go back to GET /
+      // GET / resets totalCorrect to 0 and starts a fresh game session
+      document.getElementById("app").innerHTML = '<a href="/" class="restart-button">Restart</a>'
+    }
+
+
+  </script>
+</body>
+<!-- End of all visible page content -->
+
+</html>
+<!-- End of HTML document -->

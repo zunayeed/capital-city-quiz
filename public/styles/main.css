@@ -1,0 +1,273 @@
+/* ============================================================ */
+/* GLOBAL STYLES                                                 */
+/* ============================================================ */
+
+body {
+  background-image: url(../images/background.jpg);
+  /* Sets a full-page background image loaded from the /public/images/ folder */
+  /* Path is relative to the CSS file location, so ../ steps up one directory */
+
+  background-repeat: no-repeat;
+  /* Prevents the image from tiling/repeating if it's smaller than the viewport */
+
+  background-size: cover;
+  /* Scales the image to cover the entire viewport, cropping edges if needed */
+  /* Ensures no white gaps appear regardless of screen size */
+
+  font-family: Arial, sans-serif;
+  /* Sets the default font for all text on the page */
+  /* 'sans-serif' is the generic fallback if Arial is not available on the user's device */
+}
+
+/* ============================================================ */
+/* QUIZ CARD — MAIN CONTAINER                                    */
+/* The white rounded card that holds the entire quiz UI         */
+/* ============================================================ */
+
+.container {
+  display: flex;
+  /* Enables Flexbox layout — children (score, question, input, button) stack vertically */
+
+  flex-direction: column;
+  /* Stacks all child elements top-to-bottom in a single column */
+
+  justify-content: space-evenly;
+  /* Distributes equal space between and around all child elements vertically */
+  /* Creates breathing room between score, country name, input, and button */
+
+  max-width: 40%;
+  /* Limits the card width to 40% of the viewport — keeps it compact on wide screens */
+
+  height: 300px;
+  /* Fixed card height — combined with space-evenly, this controls the vertical rhythm */
+
+  margin: 15% auto;
+  /* 15% top margin pushes the card down from the top of the page (vertically centers it visually) */
+  /* 'auto' on left/right centers the card horizontally within the viewport */
+
+  padding: 20px;
+  /* Adds 20px of inner spacing on all sides so content doesn't touch the card edges */
+
+  background-color: #fff;
+  /* White card background — contrasts against the background image behind it */
+
+  border-radius: 10px;
+  /* Rounds all four corners of the card for a modern, soft UI appearance */
+
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* Adds a subtle drop shadow around the card edges */
+  /* 0 0 = no horizontal/vertical offset (shadow spreads evenly), 10px blur, 10% black opacity */
+
+  padding-top: 10px;
+  /* Overrides the top portion of the 20px padding to tighten the space at the top of the card */
+}
+
+/* ============================================================ */
+/* TYPOGRAPHY                                                    */
+/* ============================================================ */
+
+h1 {
+  text-align: center;
+  /* Centers the country name question horizontally within the card */
+}
+
+h3 {
+  margin: 0;
+  /* Removes the browser's default top/bottom margin on h3 (Total Score label) */
+  /* Prevents unwanted extra space inside the card layout */
+}
+
+/* ============================================================ */
+/* ANSWER INPUT SECTION                                          */
+/* ============================================================ */
+
+.answer-container {
+  width: 100%;
+  /* Stretches the wrapper div to the full width of the card */
+
+  text-align: center;
+  /* Centers the input field horizontally within this container */
+}
+
+input {
+  text-align: center;
+  /* Centers the user's typed text inside the input field */
+
+  width: 30%;
+  /* Input field is 30% of the card width — intentionally narrow and focused */
+
+  margin: 10px auto;
+  /* 10px top/bottom spacing; auto left/right centers the input within .answer-container */
+
+  padding: 10px;
+  /* Inner spacing so typed text doesn't sit flush against the input border */
+
+  border: 1px solid #ccc;
+  /* Thin light-gray border outlines the input field */
+
+  border-radius: 5px;
+  /* Slightly rounds the input field corners to match the card's visual style */
+}
+
+/* ============================================================ */
+/* SUBMIT BUTTON                                                  */
+/* ============================================================ */
+
+button {
+  font-weight: 800;
+  /* Extra-bold text weight for strong visual emphasis on the SUBMIT label */
+
+  letter-spacing: 2px;
+  /* Adds 2px spacing between each character — gives the button text a wide, bold look */
+
+  font-size: large;
+  /* Sets font size to the browser's predefined "large" size (typically ~18px) */
+
+  display: block;
+  /* Makes the button a block-level element so width: 100% takes full effect */
+
+  width: 100%;
+  /* Stretches the button to the full width of the card */
+
+  padding: 10px;
+  /* Inner spacing above and below the button text for a comfortable click target */
+
+  background-color: #ffca00;
+  /* Bright yellow button background — high contrast, draws the user's eye */
+
+  color: white;
+  /* White text on the yellow background for readability */
+
+  border: none;
+  /* Removes the browser's default button border for a cleaner look */
+
+  border-radius: 5px;
+  /* Rounds the button corners to match the card and input field styling */
+
+  cursor: pointer;
+  /* Changes the mouse cursor to a hand pointer on hover — signals this is clickable */
+}
+
+/* ============================================================ */
+/* SCORE ROW LAYOUT                                              */
+/* ============================================================ */
+
+.horizontal-container {
+  display: flex;
+  /* Enables Flexbox for the score row */
+
+  justify-content: space-between;
+  /* Pushes child elements to opposite ends of the row (score label left, value right) */
+  /* Currently only the score h3 is inside, so this is ready for a second element if added */
+}
+
+/* ============================================================ */
+/* BUTTON HOVER STATE                                            */
+/* ============================================================ */
+
+button:hover {
+  background-color: #ffd500;
+  /* Slightly darker/richer yellow when the user hovers over the button */
+  /* Provides visual feedback that the button is interactive */
+}
+
+/* ============================================================ */
+/* RESULT TEXT (CURRENTLY UNUSED IN THE HTML)                   */
+/* ============================================================ */
+
+#result {
+  text-align: center;
+  /* Centers any result message text horizontally */
+
+  font-size: 24px;
+  /* Large font size for visible feedback — this element is not rendered in the current HTML */
+  /* Likely a leftover from an earlier version or reserved for future use */
+}
+
+/* ============================================================ */
+/* FEEDBACK ICONS — CHECKMARK & CROSS ANIMATIONS                */
+/* Animate the ✔ / ✖ icons inside the submit button             */
+/* Icons start transparent and fade into their final color      */
+/* ============================================================ */
+
+.checkmark {
+  color: transparent;
+  /* Icon starts invisible — the animation below transitions it to green */
+
+  animation: checkmark 0.5s ease;
+  /* Runs the @keyframes 'checkmark' animation over 0.5 seconds with an ease timing curve */
+  /* 'ease' = starts slow, speeds up, then slows down — feels natural and smooth */
+}
+
+.cross {
+  color: transparent;
+  /* Icon starts invisible — the animation below transitions it to red */
+
+  animation: cross 0.5s ease;
+  /* Runs the @keyframes 'cross' animation over 0.5 seconds with the same ease curve */
+}
+
+/* ============================================================ */
+/* KEYFRAME ANIMATIONS                                           */
+/* ============================================================ */
+
+@keyframes checkmark {
+  0% {
+    color: transparent;
+    /* Animation start: checkmark is fully invisible */
+  }
+  100% {
+    color: green;
+    /* Animation end: checkmark fades in as green — signals a correct answer */
+  }
+}
+
+@keyframes cross {
+  0% {
+    color: transparent;
+    /* Animation start: cross is fully invisible */
+  }
+  100% {
+    color: red;
+    /* Animation end: cross fades in as red — signals a wrong answer / game over */
+  }
+}
+
+/* ============================================================ */
+/* GAME OVER — RESTART BUTTON                                    */
+/* Replaces the entire body content via JavaScript on game over */
+/* Styled as a pill-shaped floating button centered on screen   */
+/* ============================================================ */
+
+.restart-button {
+  display: inline-block;
+  /* Allows padding and sizing to work correctly on an <a> tag (which is inline by default) */
+
+  background-color: #fff;
+  /* White background — clean contrast against the background image */
+
+  color: #333;
+  /* Dark gray text — readable without being harsh black */
+
+  padding: 15px 30px;
+  /* 15px top/bottom, 30px left/right — creates a wide, comfortable clickable area */
+
+  font-size: 18px;
+  /* Larger font size makes the restart button easy to read and tap on mobile */
+
+  text-align: center;
+  /* Centers the "Restart" text within the button */
+
+  text-decoration: none;
+  /* Removes the default underline from the <a> hyperlink tag */
+
+  border-radius: 30px;
+  /* Large border-radius creates a fully pill-shaped button (rounded ends) */
+
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* Same subtle shadow as the quiz card — gives the button a lifted, floating appearance */
+
+  transition: background-color 0.3s, color 0.3s;
+  /* Smoothly animates background and text color changes over 0.3 seconds */
+  /* Applied on hover (no hover state is defined here, but this is ready for one) */
+}
